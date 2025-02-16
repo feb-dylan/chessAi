@@ -1,0 +1,18 @@
+.App {
+  text-align: center;
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+.chessboard-container {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+h2 {
+  color: darkred;
+}
