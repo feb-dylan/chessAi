@@ -7,6 +7,7 @@ function App() {
   const [game, setGame] = useState(new Chess());
   const [gameOver, setGameOver] = useState(false);
   const [result, setResult] = useState("");
+  const [isWhiteTurn, setIsWhiteTurn] = useState(true); // True if it's white's turn
 
   const pieceValues = {
     p: 100,
@@ -81,6 +82,7 @@ function App() {
     if (!bestMove) return;
     currentGame.move(bestMove);
     setGame(new Chess(currentGame.fen())); // Update game state
+    setIsWhiteTurn(true); // Change turn to white after AI move
     checkGameOver(currentGame);
   };
 
@@ -105,18 +107,32 @@ function App() {
     });
     if (move === null) return false;
     setGame(new Chess(currentGame.fen())); // Update game state
+    setIsWhiteTurn(false); // Change turn to black after white move
     checkGameOver(currentGame);
     return true;
   };
 
+  const handleResign = () => {
+    const currentGame = new Chess(game.fen());
+    setGameOver(true);
+    setResult(currentGame.turn() === "w" ? "White resigned. Black wins!" : "Black resigned. White wins!");
+  };
+
+  const handleRestart = () => {
+    setGame(new Chess());
+    setGameOver(false);
+    setResult("");
+    setIsWhiteTurn(true); // White starts first
+  };
+
   useEffect(() => {
-    if (!game.isGameOver() && game.turn() === "b") {
+    if (!game.isGameOver() && !isWhiteTurn) {
       const timer = setTimeout(() => {
-        makeAIMove();
-      }, 500);
+        makeAIMove(); // AI makes its move when it's black's turn
+      }, 500); // Give some time for UI to update
       return () => clearTimeout(timer);
     }
-  }, [game]);
+  }, [isWhiteTurn, game]);
 
   return (
     <div className="App">
@@ -125,7 +141,14 @@ function App() {
         <Chessboard position={game.fen()} onPieceDrop={onDrop} boardWidth={400} />
       </div>
       {gameOver && <h2>Game Over: {result}</h2>}
-      <p>FEN: {game.fen()}</p>
+      <div className="controls">
+        <button onClick={handleResign} className="resign" disabled={gameOver}>
+          Resign
+        </button>
+        <button onClick={handleRestart} disabled={!gameOver}>
+          Restart Game
+        </button>
+      </div>
     </div>
   );
 }
