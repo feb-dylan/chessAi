@@ -255,7 +255,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Human vs. AI Chess</h1>
+      <h1>Recursive Chess Bot</h1>
       <div className="chessboard-container">
         <Chessboard position={game.fen()} onPieceDrop={onDrop} boardWidth={400} />
       </div>
